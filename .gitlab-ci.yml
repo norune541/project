@@ -1,0 +1,49 @@
+image: node:22-bookworm-slim
+
+stages:
+  - test
+  - build
+
+default:
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+    policy: pull-push
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+
+test:
+  stage: test
+  services:
+    - name: postgres:17-alpine
+      alias: postgres
+  variables:
+    FF_NETWORK_PER_BUILD: "true"
+    POSTGRES_DB: project_test
+    POSTGRES_USER: project
+    POSTGRES_PASSWORD: project_ci_password
+  script:
+    - npm run shared:build
+    - cd backend
+    - DATABASE_URL="postgresql://project:project_ci_password@postgres:5432/project_test?schema=public" DISABLE_ERD=true npx prisma generate
+    - |
+      cat > .env.test <<EOF
+      DATABASE_URL=postgresql://project:project_ci_password@postgres:5432/project_test?schema=public
+      EOF
+    - cd ..
+    - npm run backend:lint
+    - npm run backend:test:unit
+    - npm run backend:test:int
+
+build:
+  stage: build
+  script:
+    - npm run shared:build
+    - cd backend
+    - DATABASE_URL="postgresql://user:password@localhost:5432/build" DISABLE_ERD=true npx prisma generate
+    - cd ..
+    - npm run backend:build
+    - npm run frontend:build

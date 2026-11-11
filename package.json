@@ -1,0 +1,30 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "backend:dev": "npm run start:dev --workspace=backend",
+    "backend:lint": "npm run lint --workspace=backend",
+    "backend:test:unit": "npm run test:unit --workspace=backend",
+    "backend:test:int": "npm run test:int --workspace=backend",
+    "backend:build": "npm run build --workspace=backend",
+    "backend:start": "npm run start --workspace=backend",
+    "frontend:dev": "npm run dev --workspace=frontend",
+    "frontend:lint": "npm run lint --workspace=frontend",
+    "frontend:build": "npm run build --workspace=frontend",
+    "frontend:preview": "npm run preview --workspace=frontend",
+    "shared:build": "npm run build --workspace=shared",
+    "format": "prettier --write \"**/*.{js,ts,json,md}\"",
+    "api:generate": "openapi-typescript http://localhost:3000/docs-json -o frontend/src/common/types/schema.d.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^5.9.3"
+  }
+}

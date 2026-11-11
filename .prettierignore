@@ -1,0 +1,19 @@
+# Ignore build outputs and dependencies
+**/node_modules
+**/dist
+**/build
+**/.next
+**/.nuxt
+
+# Ignore lockfiles and cache
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.turbo
+.nx
+
+# Ignore media and temporary files
+**/coverage
+**/*.mp4
+**/*.svg
+**/*.png

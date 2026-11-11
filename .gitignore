@@ -1,0 +1,66 @@
+# ==========================================
+# Environments and Secrets (Nested .env files)
+# ==========================================
+# Blocks ALL .env files inside any folder or subfolder
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test
+**/.env.production.local
+**/.env.*.local
+
+**/generated/
+**/@generated/
+
+# Ignore private keys across all modules
+**/*.pem
+**/*.key
+
+# KEEP configuration templates tracked in Git
+!**/.env.example
+!**/.env.sample
+
+# ==========================================
+# Dependencies and Tooling Cache
+# ==========================================
+# Root and nested node_modules
+**/node_modules/
+.pnpm-store/
+
+# Monorepo build tools cache (Turborepo, Nx, Lerna)
+.turbo/
+.nx/
+.lerna/
+
+# ==========================================
+# Build and Output Artifacts
+# ==========================================
+# Ignore dist/build outputs in every single module
+**/dist/
+**/build/
+**/.next/
+**/.nuxt/
+**/*.tsbuildinfo
+
+# ==========================================
+# Logs and Test Coverage
+# ==========================================
+**/logs/
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+**/coverage/
+**/.nyc_output/
+
+# ==========================================
+# System and IDE Files
+# ==========================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
