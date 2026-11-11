@@ -44,6 +44,7 @@ describe('Users API (Integration)', () => {
         data: {
           email: 'test@example.com',
           username: 'Test User',
+          password: 'password',
         },
       });
 

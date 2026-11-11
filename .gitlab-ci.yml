@@ -21,7 +21,7 @@ test:
     - name: postgres:17-alpine
       alias: postgres
   variables:
-    FF_NETWORK_PER_BUILD: "true"
+    FF_NETWORK_PER_BUILD: 'true'
     POSTGRES_DB: project_test
     POSTGRES_USER: project
     POSTGRES_PASSWORD: project_ci_password
@@ -35,6 +35,7 @@ test:
       EOF
     - cd ..
     - npm run backend:lint
+    - npm run frontend:lint
     - npm run backend:test:unit
     - npm run backend:test:int
 
