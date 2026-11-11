@@ -11,7 +11,7 @@
 
 ## Decision
 
-Проект организован как Monorepo с использованием Bun Workspaces.
+Проект организован как Monorepo с использованием npm Workspaces.
 
 Структура проекта:
 
