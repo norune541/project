@@ -8,6 +8,7 @@ import { UsersModule } from '../users.module.js';
 import { PrismaProvider } from '../../../prisma/prisma.provider.js';
 import { databaseGuard } from '../../../prisma/database.guard.js';
 
+// appTestModule
 describe('Users API (Integration)', () => {
   let app: INestApplication;
   let prisma: PrismaProvider;
