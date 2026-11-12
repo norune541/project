@@ -17,13 +17,4 @@ export class UsersService {
     const user = await this.userDao.getUser(id);
     return user;
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  update(id: number, updateUserDto: any) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
 }
