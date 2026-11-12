@@ -1,35 +1,31 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Cloud, Loader2, ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Cloud, Loader2, ArrowUpRight, AlertCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
-import { mockSignup } from '@/mock';
+import { useForm } from 'react-hook-form';
+import { useSignup } from './hooks/signup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { RegisterInputDto } from 'shared';
+import { registerSchema } from 'shared';
+import { FieldGroup, Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function SignupPage() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { mutateAsync, isPending, error, isError } = useSignup();
 
-  const [form, setForm] = useState({
-    username: '',
-    email: '',
-    password: '',
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterInputDto>({ resolver: zodResolver(registerSchema) });
 
-  const signup = useMutation({
-    mutationFn: mockSignup,
-    onSuccess: (user) => {
-      queryClient.setQueryData(['me'], user);
-      navigate('/me', { replace: true });
-    },
-  });
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    signup.mutate(form);
+  const onSubmit = async (input: RegisterInputDto) => {
+    const data = await mutateAsync(input);
+    if (data) {
+      localStorage.setItem('accessToken', data.accessToken);
+    }
   };
 
   return (
@@ -100,79 +96,85 @@ export default function SignupPage() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
                 incididunt ut labore.
               </p>
+              {isError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="size-4" />
+                  <AlertTitle>Ошибка входа</AlertTitle>
+                  <AlertDescription>
+                    {error.message || 'Не удалось выполнить вход'}
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
 
             {/* Form */}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="username">Имя пользователя</Label>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <FieldGroup>
+                <Field className="space-y-1">
+                  <FieldLabel htmlFor="email">Имя пользователя</FieldLabel>
+                  <Input
+                    id="username"
+                    {...register('username')}
+                    placeholder="username"
+                    autoComplete="username"
+                    className="h-11"
+                  />
+                  {errors.username && (
+                    <FieldDescription className="text-destructive">
+                      {errors.username.message}
+                    </FieldDescription>
+                  )}
+                </Field>
 
-                <Input
-                  id="username"
-                  name="username"
-                  placeholder="username"
-                  autoComplete="username"
-                  value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  disabled={signup.isPending}
-                  className="h-11"
-                />
-              </div>
+                <Field className="space-y-1">
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    {...register('email')}
+                    placeholder="you@company.com"
+                    autoComplete="email"
+                    className="h-11"
+                  />
+                  {errors.email && (
+                    <FieldDescription className="text-destructive">
+                      {errors.email.message}
+                    </FieldDescription>
+                  )}
+                </Field>
 
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  autoComplete="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  disabled={signup.isPending}
-                  className="h-11"
-                />
-              </div>
+                <Field className="space-y-1">
+                  <FieldLabel htmlFor="email">Пароль</FieldLabel>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Пароль</Label>
+                  <Input
+                    id="password"
+                    {...register('password')}
+                    autoComplete="new-password"
+                    placeholder="At least 8 characters"
+                    className="h-11"
+                  />
+                  {errors.password && (
+                    <FieldDescription className="text-destructive">
+                      {errors.password.message}
+                    </FieldDescription>
+                  )}
+                </Field>
 
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="At least 8 characters"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  disabled={signup.isPending}
-                  className="h-11"
-                />
-              </div>
+                <Button type="submit" className="h-11 w-full" disabled={isPending}>
+                  {isPending ? <Loader2 className="size-4 animate-spin" /> : 'Войти'}
+                </Button>
 
-              {signup.isError && (
-                <p className="text-sm text-destructive">
-                  Не удалось создать аккаунт. Попробуйте ещё раз.
+                <p className="text-center text-sm text-muted-foreground">
+                  Уже есть аккаунт?{' '}
+                  <Link
+                    to="/login"
+                    className="font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    Войдите
+                  </Link>
                 </p>
-              )}
-
-              <Button type="submit" className="h-11 w-full" disabled={signup.isPending}>
-                {signup.isPending && <Loader2 className="size-4 animate-spin" />}
-
-                {signup.isPending ? 'Создание аккаунта...' : 'Создать аккаунт'}
-              </Button>
-
-              <p className="text-center text-sm text-muted-foreground">
-                Уже есть аккаунт?{' '}
-                <Link
-                  to="/login"
-                  className="font-medium text-primary underline-offset-4 hover:underline"
-                >
-                  Войдите
-                </Link>
-              </p>
+              </FieldGroup>
             </form>
           </div>
 

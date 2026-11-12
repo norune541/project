@@ -1,22 +1,29 @@
 import { Link } from 'react-router-dom';
-import { Cloud, ArrowUpRight } from 'lucide-react';
+import { Cloud, ArrowUpRight, Loader2, AlertCircle } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { loginSchema, type LoginInputDto } from 'shared';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
+import { useLogin } from './hooks/login';
 
 export default function LoginPage() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInputDto>({ resolver: zodResolver(loginSchema) });
+  const { mutateAsync, isPending, error, isError } = useLogin();
 
-    const formData = new FormData(event.currentTarget);
-
-    const email = formData.get('email');
-    const password = formData.get('password');
-
-    console.log({ email, password });
-
-    // Connect authentication API here.
+  const onSubmit = async (input: LoginInputDto) => {
+    const data = await mutateAsync(input);
+    if (data) {
+      localStorage.setItem('accessToken', data.accessToken);
+    }
   };
 
   return (
@@ -84,23 +91,35 @@ export default function LoginPage() {
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Войдите в аккаунт, чтобы продолжить работу.
               </p>
+              {isError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="size-4" />
+                  <AlertTitle>Ошибка входа</AlertTitle>
+                  <AlertDescription>
+                    {error.message || 'Не удалось выполнить вход'}
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <FieldGroup className="gap-5">
                 <Field>
                   <FieldLabel htmlFor="email">Email</FieldLabel>
 
                   <Input
+                    {...register('email')}
                     id="email"
-                    name="email"
-                    type="email"
-                    placeholder="you@company.com"
+                    placeholder="example@email.com"
                     autoComplete="email"
-                    required
                     className="h-11"
                   />
+                  {errors.email && (
+                    <FieldDescription className="text-destructive">
+                      {errors.email.message}
+                    </FieldDescription>
+                  )}
                 </Field>
 
                 <Field>
@@ -116,19 +135,22 @@ export default function LoginPage() {
                   </div>
 
                   <Input
+                    {...register('password')}
                     id="password"
-                    name="password"
-                    type="password"
                     autoComplete="current-password"
                     placeholder="At least 8 characters"
-                    required
                     className="h-11"
                   />
+                  {errors.password && (
+                    <FieldDescription className="text-destructive">
+                      {errors.password.message}
+                    </FieldDescription>
+                  )}
                 </Field>
 
                 <Field className="gap-4">
-                  <Button type="submit" className="h-11 w-full">
-                    Войти
+                  <Button type="submit" className="h-11 w-full" disabled={isPending}>
+                    {isPending ? <Loader2 className="size-4 animate-spin" /> : 'Войти'}
                   </Button>
 
                   <FieldDescription className="text-center">

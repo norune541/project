@@ -4,6 +4,54 @@
  */
 
 export interface paths {
+    "/api/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AuthController_me"];
+        put?: never;
+        post?: never;
+        delete: operations["AuthController_logout"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/users": {
         parameters: {
             query?: never;
@@ -40,8 +88,53 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        CreateUserDto: Record<string, never>;
-        UpdateUserDto: Record<string, never>;
+        UserResponseDto: {
+            /** @example af3441c0-a8f7-48c8-b565-884375f17734 */
+            id: string;
+            /** @example atest@example.com */
+            email: string;
+            /** @example cool */
+            username: string;
+        };
+        AuthResponseDto: {
+            user: components["schemas"]["UserResponseDto"];
+            /** @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... */
+            accessToken: string;
+        };
+        RegisterValidationFailedDto: {
+            /**
+             * @example [
+             *       "email: Invalid input: expected string, received undefined",
+             *       "password: Invalid input: expected string, received undefined"
+             *     ]
+             */
+            message: string[];
+            /** @example Bad Request */
+            error: string;
+            /** @example 400 */
+            statusCode: number;
+        };
+        LoginValidationFailedDto: {
+            /**
+             * @example [
+             *       "email: Invalid input: expected string, received undefined",
+             *       "password: Invalid input: expected string, received undefined"
+             *     ]
+             */
+            message: string[];
+            /** @example Bad Request */
+            error: string;
+            /** @example 400 */
+            statusCode: number;
+        };
+        UnauthorizedResponseDto: {
+            /** @example Invalid email or password */
+            message: string;
+            /** @example Unauthorized */
+            error: string;
+            /** @example 401 */
+            statusCode: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -51,6 +144,134 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    AuthController_register: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    /** @example passsword */
+                    password: string;
+                    /** @example username */
+                    username?: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterValidationFailedDto"];
+                };
+            };
+        };
+    };
+    AuthController_login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    /** @example password */
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginValidationFailedDto"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedResponseDto"];
+                };
+            };
+        };
+    };
+    AuthController_me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedResponseDto"];
+                };
+            };
+        };
+    };
+    AuthController_logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedResponseDto"];
+                };
+            };
+        };
+    };
     UsersController_findAll: {
         parameters: {
             query?: never;
@@ -75,11 +296,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateUserDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
                 headers: {
@@ -136,11 +353,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateUserDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {

@@ -1,21 +1,25 @@
-import ky from 'ky';
+import createClient from 'openapi-fetch';
+import type { paths } from '../types/schema';
 
-export const api = ky.create({
-  baseUrl: '/api',
+export const publicApi = createClient<paths>({
   headers: {
     'Content-Type': 'application/json',
   },
   credentials: 'include',
-  timeout: 10_000,
-  hooks: {
-    beforeRequest: [
-      ({ request }) => {
-        const token = localStorage.getItem('accessToken');
+});
 
-        if (token) {
-          request.headers.set('Authorization', `Bearer ${token}`);
-        }
-      },
-    ],
+export const protectedpi = createClient<paths>({
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  credentials: 'include',
+  fetch: (request) => {
+    const token = localStorage.getItem('accessToken');
+
+    if (token) {
+      request.headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return fetch(request);
   },
 });
