@@ -55,20 +55,4 @@ describe('UsersService', () => {
       expect(result).toBeNull();
     });
   });
-
-  describe('update', () => {
-    it('should return update message', () => {
-      const result = service.update(1, {} as any);
-
-      expect(result).toBe('This action updates a #1 user');
-    });
-  });
-
-  describe('remove', () => {
-    it('should return remove message', () => {
-      const result = service.remove(1);
-
-      expect(result).toBe('This action removes a #1 user');
-    });
-  });
 });

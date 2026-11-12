@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, UseGuards, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiOkResponse,
@@ -49,6 +58,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ type: UnauthorizedResponseDto })
   @UseGuards(JwtAuthGuard)
   @Delete('me')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@CurrentUser() user: AuthenticatedUser) {
     await this.logoutUseCase.execute(user.id);
   }

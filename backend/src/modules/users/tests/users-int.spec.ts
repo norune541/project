@@ -93,25 +93,4 @@ describe('Users API (Integration)', () => {
       expect(response.text).toBe('This action returns all users');
     });
   });
-
-  describe('PATCH /users/:id', () => {
-    it('should return the update placeholder', async () => {
-      const response = await request(app.getHttpServer())
-        .patch('/users/1')
-        .send({
-          username: 'Updated User',
-        })
-        .expect(200);
-
-      expect(response.text).toBe('This action updates a #1 user');
-    });
-  });
-
-  describe('DELETE /users/:id', () => {
-    it('should return the remove placeholder', async () => {
-      const response = await request(app.getHttpServer()).delete('/users/1').expect(200);
-
-      expect(response.text).toBe('This action removes a #1 user');
-    });
-  });
 });

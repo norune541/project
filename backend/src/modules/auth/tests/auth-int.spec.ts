@@ -132,4 +132,47 @@ describe('Auth API (Integration)', () => {
         .expect(401);
     });
   });
+
+  describe('DELETE /auth/me', () => {
+    let accessToken: string;
+    let userId: string;
+
+    beforeEach(async () => {
+      const response = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({
+          email: 'test@example.com',
+          password: 'password123',
+          username: 'tester',
+        })
+        .expect(201);
+
+      accessToken = response.body.accessToken;
+      userId = response.body.user.id;
+    });
+
+    it('should delete a user', async () => {
+      await request(app.getHttpServer())
+        .delete('/auth/me')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(204);
+
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      expect(user).toBeNull();
+    });
+
+    it('should reject deletion without access token', async () => {
+      await request(app.getHttpServer()).delete('/auth/me').expect(401);
+    });
+
+    it('should reject deletion with invalid access token', async () => {
+      await request(app.getHttpServer())
+        .delete('/auth/me')
+        .set('Authorization', 'Bearer invalid-token')
+        .expect(401);
+    });
+  });
 });
