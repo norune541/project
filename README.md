@@ -53,6 +53,11 @@ npm run frontend:lint
 npm run backend:dev
 ```
 
+## Prisma studio:
+```bash
+npm run prisma:dev
+```
+
 ### 5. Start frontend in another terminal:
 
 ```bash

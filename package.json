@@ -24,6 +24,7 @@
     "test:cov": "npm run test:cov --workspace=backend",
     "backend:db:dev": "npm run db:dev:migrate --workspace=backend",
     "backend:db:test": "npm run db:test:migrate --workspace=backend",
+    "prisma:dev": "npm run prisma:dev --workspace=backend",
     "api:generate": "openapi-typescript http://localhost:3000/docs-json -o frontend/src/common/types/schema.d.ts"
   },
   "devDependencies": {

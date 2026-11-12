@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { Logger } from '@nestjs/common';
+import { Logger, StandardSchemaValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module.js';
@@ -16,6 +16,7 @@ async function bootstrap() {
   // Security
   app.use(helmet());
   app.enableCors();
+  app.useGlobalPipes(new StandardSchemaValidationPipe());
 
   // Global prefix
   app.setGlobalPrefix('/api');

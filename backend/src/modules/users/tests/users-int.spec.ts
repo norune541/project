@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { beforeAll, beforeEach, afterAll, describe, it, expect } from 'vitest';
 
+import { PrismaModule } from '../../../prisma/prisma.module.js';
 import { UsersModule } from '../users.module.js';
 import { PrismaProvider } from '../../../prisma/prisma.provider.js';
 import { databaseGuard } from '../../../prisma/database.guard.js';
@@ -14,7 +15,7 @@ describe('Users API (Integration)', () => {
   beforeAll(async () => {
     databaseGuard();
     const moduleRef = await Test.createTestingModule({
-      imports: [UsersModule],
+      imports: [PrismaModule, UsersModule],
     }).compile();
 
     app = moduleRef.createNestApplication();

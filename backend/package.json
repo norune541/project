@@ -20,7 +20,8 @@
     "test:int": "dotenv -e .env.test -- sh -c 'npm run db:test:migrate && NODE_ENV=test vitest run --config ./vitest.integration.config.ts --coverage'",
     "db:test:migrate": "dotenv -e .env.test -- prisma migrate dev",
     "db:dev:migrate": "dotenv -e .env.local -- prisma migrate dev",
-    "db:deploy": "prisma migrate deploy --schema=src/prisma/schema.prisma"
+    "db:deploy": "prisma migrate deploy --schema=src/prisma/schema.prisma",
+    "prisma:dev": "dotenv -e .env.local -- prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
