@@ -25,6 +25,8 @@ test:
     POSTGRES_DB: project_test
     POSTGRES_USER: project
     POSTGRES_PASSWORD: project_ci_password
+    JWT_SECRET: test-jwt-secret-for-ci-only
+    JWT_EXPIRES: 3600
   script:
     - npm run shared:build
     - cd backend
