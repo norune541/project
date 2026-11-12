@@ -47,6 +47,11 @@ Frontend:
 npm run frontend:lint
 ```
 
+## Seed the development database (optional):
+```bash
+npm run db:seed:dev
+```
+
 ### 4. Start backend:
 
 ```bash
