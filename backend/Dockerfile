@@ -75,4 +75,4 @@ WORKDIR /app/backend
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run db:deploy && node dist/main.js"]
+CMD ["sh", "-c", "npm run db:deploy && npm run db:seed:prod && node dist/main.js"]
